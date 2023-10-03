@@ -28,22 +28,36 @@ namespace RubiksCubeSolver
         public void GenerateTreePhase1()
         {
             List<Node> children = new List<Node>();
-            Node current = adjacencyList.Last().Key;
+            Node current = adjacencyList.Last().Key; // this will be kept constant while temp changes
             // creating deep copies
-            Cubie[] tempcorner = current.state.GetCube()[0];
-            Cubie[] tempedge = current.state.GetCube()[1];
-            //
-            Node temp = new Node(current, new Cube(tempcorner, tempedge), "");
-            current.state.Print();
-            Console.WriteLine("-------");
-            temp.state.Rotate('U', 1);
-            temp.state.Print();
-            Console.WriteLine("-------");
-            current.state.Print(); // finish logic
+            Node temp = DeepCopy(current);
+            // now node temp is independent from current
+            for (int i = 0; i < moves.Length; i++)
+            {
+                for (int j = 0; j < directions.Length; j++)
+                {
+                    temp.state.Rotate(moves[i], directions[j]);
+                    temp.move = Combine(moves[i], directions[j]);
+                    children.Add(temp);
+                    temp = DeepCopy(current);
+                }
+            }
+            foreach (Node child in children)
+            {
+                child.state.Print();
+                Console.WriteLine("--------");
+            }
         }
         public Dictionary<Node, List<Node>> GetGraph()
         {
             return adjacencyList;
+        }
+        private Node DeepCopy(Node current)
+        {
+            Cubie[] tempcorner = current.state.GetCube()[0];
+            Cubie[] tempedge = current.state.GetCube()[1];
+            Node temp = new Node(current, new Cube(tempcorner, tempedge), "");
+            return temp;
         }
         private void Coordinates(Cube state)
         {
