@@ -28,6 +28,23 @@ namespace RubiksCubeSolver
             corners = cube[0];
             edges = cube[1];
         }
+        public Cube(Cubie[] c, Cubie[] e) // cloning constructor
+        {
+            cube = new Cubie[2][];
+            corners = new Cubie[c.Length];
+            edges = new Cubie[e.Length];
+            Initialise();
+            for (int i = 0; i < c.Length; i++)
+            {
+                corners[i] = (Cubie)c[i].Clone();
+            }
+            for (int i = 0; i < e.Length; i++)
+            {
+                edges[i] = (Cubie)e[i].Clone();
+            }
+            cube[0] = corners;
+            cube[1] = edges;
+        }
         public Cubie[][] GetCube()
         {
             return cube;

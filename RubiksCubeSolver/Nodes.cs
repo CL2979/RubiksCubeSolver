@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
-    public class Cubie
+    public class Cubie : ICloneable
     {
+        // pull all of these out seperately and copy using a new constructor
         public int orientation { get; set; }
         public string location { get; set; }
         public string originalLocation { get; set; }
@@ -20,13 +21,28 @@ namespace RubiksCubeSolver
             this.location = location;
             this.originalLocation = originalLocation;
         }
+        public object Clone()
+        {
+            Cubie copy = new Cubie(orientation, location, originalLocation)
+            {
+                orientation = this.orientation,
+                location = this.location,
+                originalLocation = this.originalLocation,
+                colour1 = this.colour1,
+                colour2 = this.colour2,
+                colour3 = this.colour3
+            };
+            return copy;
+        }
     }
     public class Node
     {
+        public Node parent;
         public Cube state { get; set; }
         public string move { get; set; }
-        public Node(Cube state, string move)
+        public Node(Node parent, Cube state, string move)
         {
+            this.parent = parent;
             this.state = state;
             this.move = move;
         }

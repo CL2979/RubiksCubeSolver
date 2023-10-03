@@ -18,8 +18,9 @@ namespace RubiksCubeSolver
         private Cube initialState;
         public Graph(Cube initialState)
         {
-            Node root = new Node(initialState, "-");
+            Node root = new Node(null, initialState, "-");
             adjacencyList = new Dictionary<Node, List<Node>>();
+            adjacencyList.Add(root, new List<Node>());
             this.initialState = initialState;
         }
         // GC.Collect();
@@ -27,11 +28,18 @@ namespace RubiksCubeSolver
         public void GenerateTreePhase1()
         {
             List<Node> children = new List<Node>();
-            //Node current = graph.Last();
-            //Node temp = new Node(current, null, "");
-            //Cubie[][] Old = current.state.GetCube();
-            //Cubie[][] New  = new Cubie[Old.Length][];
-            // fix with cloning
+            Node current = adjacencyList.Last().Key;
+            // creating deep copies
+            Cubie[] tempcorner = current.state.GetCube()[0];
+            Cubie[] tempedge = current.state.GetCube()[1];
+            //
+            Node temp = new Node(current, new Cube(tempcorner, tempedge), "");
+            current.state.Print();
+            Console.WriteLine("-------");
+            temp.state.Rotate('U', 1);
+            temp.state.Print();
+            Console.WriteLine("-------");
+            current.state.Print(); // finish logic
         }
         public Dictionary<Node, List<Node>> GetGraph()
         {
