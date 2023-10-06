@@ -35,9 +35,7 @@ namespace RubiksCubeSolver
             Node returnNode = new Node(null, null, "");
             List<Node> children = new List<Node>();
             Node current = queue.Peek(); // this will be kept constant while temp changes
-            // creating deep copies
-            Node temp = DeepCopy(current);
-            // now node temp is independent from current
+            current.depth = 0;
             if (Phase1Complete(current.state)) return current;
             bool end = false;
             while (!end)
@@ -47,8 +45,10 @@ namespace RubiksCubeSolver
                 {
                     for (int j = 0; j < directions.Length; j++)
                     {
+                        Node temp = DeepCopy(current);
                         temp.state.Rotate(moves[i], directions[j]);
                         temp.move = Combine(moves[i], directions[j]);
+                        temp.depth = current.depth++;
                         if (Phase1Complete(temp.state))
                         {
                             returnNode = temp;
@@ -56,7 +56,6 @@ namespace RubiksCubeSolver
                         }
                         queue.Enqueue(temp, 1);
                         children.Add(temp);
-                        temp = DeepCopy(current);
                         count++;
                     }
                 }
@@ -70,9 +69,7 @@ namespace RubiksCubeSolver
             Node returnNode = new Node(null, null, "");
             List<Node> children = new List<Node>();
             Node current = queue.Peek(); // this will be kept constant while temp changes
-            // creating deep copies
-            Node temp = DeepCopy(current);
-            // now node temp is independent from current
+            current.depth = 0;
             if (Phase2Complete(current.state)) return current;
             bool end = false;
             while (!end)
@@ -80,11 +77,13 @@ namespace RubiksCubeSolver
                 current = queue.Dequeue();
                 for (int i = 0; i < G1moves.Length; i++)
                 {
+                    Node temp = DeepCopy(current);
                     string[] temporary = DeCombine(G1moves[i]);
                     char move = char.Parse(temporary[0]);
                     int direction = int.Parse(temporary[1]);
                     temp.state.Rotate(move, direction);
                     temp.move = move + direction.ToString();
+                    temp.depth = current.depth++;
                     if (Phase2Complete(temp.state))
                     {
                         returnNode = temp;
@@ -92,7 +91,6 @@ namespace RubiksCubeSolver
                     }
                     queue.Enqueue(temp, 1);
                     children.Add(temp);
-                    temp = DeepCopy(current);
                     count++;
                 }
                 Add(current, children);

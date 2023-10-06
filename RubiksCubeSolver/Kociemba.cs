@@ -146,6 +146,7 @@ namespace RubiksCubeSolver
             {
                 s += orientations[i];
             }
+            // calculate Y coordinate here
             return Bases(s, 2);
         }
         private double EPCoordinate()
@@ -179,6 +180,8 @@ namespace RubiksCubeSolver
                 s[k] = count;
                 k++;
             }
+            // search alg calulations
+            // calculate X here
             return VariableBase(s);
         }
         private double Choose(int n, int k)
