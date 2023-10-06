@@ -37,14 +37,20 @@ namespace RubiksCubeSolver
     }
     public class Node
     {
-        public Node parent;
+        public Node parent { get; set; }
         public Cube state { get; set; }
         public string move { get; set; }
+        // heuristic calculation values
+        public double H { get; set; }
+        public double G { get; set; }
+        public double F { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
         public Node(Node parent, Cube state, string move)
         {
+            this.move = move;
             this.parent = parent;
             this.state = state;
-            this.move = move;
         }
     }
     public enum Colour

@@ -51,6 +51,7 @@ namespace RubiksCubeSolver
         }
         private double UDSliceCoordinate2()
         {
+            string[] edgesInitial = new string[12];
             string[] edges = new string[4];
             double s = 0;
             int k = -1;
@@ -58,11 +59,18 @@ namespace RubiksCubeSolver
             string[] UDSliceEdges = { "FR", "FL", "BL", "BR" };
             foreach (Cubie edge in Edges)
             {
-                if (UDSliceEdges.Contains(edge.location)) edges[c++] = edge.location;
+                if (UDSliceEdges.Contains(edge.location))
+                {
+                    edgesInitial[c++] = edge.location;
+                }
             }
-            for (int n = 0; n < 4; n++)
+            for (int n = 0; n < 12; n++)
             {
-                if (UDSliceEdges.Contains(edges[n])) k++;
+                if (UDSliceEdges.Contains(edgesInitial[n]))
+                {
+                    k++;
+                    edges[k] = edgesInitial[n];
+                }
                 else s += Choose(n, k);
             }
             int x = 0;
@@ -75,7 +83,7 @@ namespace RubiksCubeSolver
                 }
                 x = (x + sCount) * j;
             }
-            return s * 24 + x;
+            return (UDSliceCoordinate() * 24) + x;
         }
         private double COCoordinate()
         {

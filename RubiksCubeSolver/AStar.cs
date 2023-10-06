@@ -6,46 +6,64 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
-    public class AStarNode
-    {
-        public int X { get; set; }
-        public int Y { get; set; }
-        public int G { get; set; }
-        public int H { get; set; }
-        public AStarNode Parent { get; set; }
-        public AStarNode(int x, int y)
-        {
-            X = x;
-            Y = y;
-            G = 0;
-            H = 0;
-            Parent = null;
-        }
-        public int F => G + H;
-    }
     public class AStar
     {
-        private int Heuristic(Cube state, byte i)
+        public List<string> Search(Dictionary<Node, List<Node>> adjacencyList, Node initial, Node target)
         {
-            int h = 0;
-            Kociemba phase = new Kociemba(state);
-            double[] coordinates = new double[3];
-            if (i == 1)
+            // temporary heuristic values in node rn
+            PRIORITYQUEUE<Node> openList = new PRIORITYQUEUE<Node>(int.MaxValue);
+            HashSet<Node> closedList = new HashSet<Node>();
+            Dictionary<Node, Node> from = new Dictionary<Node, Node>();
+            List<string> path = new List<string>();
+            // initialise the heuristic values
+            initial.G = 0;
+            initial.H = HeuristicFunction(initial, target);
+            initial.F = initial.G + initial.H;
+            openList.Enqueue(initial, (long)initial.F);
+            // initialise the queue
+            while (openList.Count() > 0)
             {
-                foreach (double d in coordinates)
+                Node currentNode = openList.Dequeue();
+                if (currentNode == target) return GetPath(from, currentNode);
+                closedList.Add(currentNode);
+                foreach (Node neighbor in adjacencyList[currentNode])
                 {
-                    h += int.Parse(d.ToString());
+                    if (closedList.Contains(neighbor)) continue;
+                    double tentativeG = currentNode.G + DistanceBetween(currentNode, neighbor);
+                    if (!openList.Contains(neighbor) || tentativeG < neighbor.G)
+                    {
+                        from[neighbor] = currentNode;
+                        neighbor.G = tentativeG;
+                        neighbor.H = HeuristicFunction(neighbor, target);
+                        neighbor.F = neighbor.G + neighbor.H;
+                        if (!openList.Contains(neighbor))
+                        {
+                            openList.Enqueue(neighbor, (long)neighbor.F);
+                        }
+                    }
                 }
             }
-            else if (i == 2)
+            return null; // base case
+        }
+        private List<string> GetPath(Dictionary<Node, Node> from, Node current)
+        {
+            List<string> path = new List<string>();
+            while (from.ContainsKey(current))
             {
-                foreach (double d in coordinates)
-                {
-                    h += int.Parse(d.ToString());
-                }
+                path.Insert(0, current.move);
+                current = from[current];
             }
-            else throw new Exception("'i' can only be 1 or 2");
-            return h;
+            path.Insert(0, current.move);
+            return path;
+        }
+        private double HeuristicFunction(Node node, Node target)
+        {
+            double edgeDistance = 
+            return;
+        }
+        private double DistanceBetween(Node node1, Node node2)
+        {
+            return Math.Sqrt(Math.Pow(node1.X - node2.X, 2) + Math.Pow(node1.Y - node2.Y, 2));
         }
     }
 }
