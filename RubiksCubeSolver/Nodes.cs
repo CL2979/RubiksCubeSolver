@@ -46,7 +46,6 @@ namespace RubiksCubeSolver
         public double G { get; set; }
         public double F { get; set; }
         public double X { get; set; }
-        public double Y { get; set; }
         public Node(Node parent, Cube state, string move)
         {
             this.move = move;

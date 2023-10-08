@@ -6,10 +6,17 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
+    public class TempPruning
+    {
+
+    }
     public class PruningTables
     {
-        // work out what to do with heuristics
-        // when pruning tables are made, it should be fast
-        // experiment with potential seriallizing to save memory
+        // ??
+    }
+    public class DeadEndRemoval
+    {
+        // use this when a solution has been reached to reduce searching size
+
     }
 }

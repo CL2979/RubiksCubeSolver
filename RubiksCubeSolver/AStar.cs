@@ -17,7 +17,7 @@ namespace RubiksCubeSolver
             List<string> path = new List<string>();
             // initialise the heuristic values
             initial.G = 0;
-            initial.H = HeuristicFunction(initial, target);
+            initial.H = HeuristicFunction(initial);
             initial.F = initial.G + initial.H;
             openList.Enqueue(initial, (long)initial.F);
             // initialise the queue
@@ -26,7 +26,8 @@ namespace RubiksCubeSolver
                 Node currentNode = openList.Dequeue();
                 if (currentNode == target) return GetPath(from, currentNode);
                 closedList.Add(currentNode);
-                foreach (Node neighbor in adjacencyList[currentNode])
+                if (!adjacencyList.ContainsKey(currentNode)) continue;
+                foreach (Node neighbor in adjacencyList[currentNode].ToList())
                 {
                     if (closedList.Contains(neighbor)) continue;
                     double tentativeG = currentNode.G + DistanceBetween(currentNode, neighbor);
@@ -34,7 +35,7 @@ namespace RubiksCubeSolver
                     {
                         from[neighbor] = currentNode;
                         neighbor.G = tentativeG;
-                        neighbor.H = HeuristicFunction(neighbor, target);
+                        neighbor.H = HeuristicFunction(neighbor);
                         neighbor.F = neighbor.G + neighbor.H;
                         if (!openList.Contains(neighbor))
                         {
@@ -43,7 +44,8 @@ namespace RubiksCubeSolver
                     }
                 }
             }
-            return null; // base case
+            Console.WriteLine("error");
+            return new List<string>(); // base case
         }
         private List<string> GetPath(Dictionary<Node, Node> from, Node current)
         {
@@ -56,14 +58,13 @@ namespace RubiksCubeSolver
             path.Insert(0, current.move);
             return path;
         }
-        private double HeuristicFunction(Node node, Node target)
+        private double HeuristicFunction(Node node)
         {
-            double edgeDistance = 
-            return;
+            return node.X;
         }
         private double DistanceBetween(Node node1, Node node2)
         {
-            return Math.Sqrt(Math.Pow(node1.X - node2.X, 2) + Math.Pow(node1.Y - node2.Y, 2));
+            return Math.Abs(node1.X - node2.X);
         }
     }
 }

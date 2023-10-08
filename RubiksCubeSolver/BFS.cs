@@ -11,11 +11,11 @@ namespace RubiksCubeSolver
         // partially broken for some reason, too slow to bother fixing
         public List<string> Search(Dictionary<Node, List<Node>> adjacencyList, Node start, Node target)
         {
-            HashSet<Node> visited = new HashSet<Node>();
-            PRIORITYQUEUE<Node> queue = new PRIORITYQUEUE<Node>(int.MaxValue); // change later after testing
-            queue.Enqueue(start, 0);
             Dictionary<Node, Node> parentMap = new Dictionary<Node, Node>();
-            while (!queue.IsEmpty())
+            HashSet<Node> visited = new HashSet<Node>();
+            Queue<Node> queue = new Queue<Node>();
+            queue.Enqueue(start);
+            while (queue.Count > 0)
             {
                 Node currentNode = queue.Dequeue();
                 if (currentNode.state == target.state) return GetPath(target, parentMap);
@@ -28,7 +28,7 @@ namespace RubiksCubeSolver
                         {
                             if (!visited.Contains(neighbor))
                             {
-                                queue.Enqueue(neighbor, 1);
+                                queue.Enqueue(neighbor);
                                 parentMap[neighbor] = currentNode;
                             }
                         }
@@ -36,7 +36,7 @@ namespace RubiksCubeSolver
                 }
             }
             Console.WriteLine("Something went wrong.");
-            return null;
+            return new List<string>();
         }
         private static List<string> GetPath(Node node, Dictionary<Node, Node> parentMap)
         {
