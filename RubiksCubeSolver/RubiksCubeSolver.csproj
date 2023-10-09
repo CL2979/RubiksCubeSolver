@@ -43,7 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AStar.cs" />
     <Compile Include="BFS.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="C:\Users\camer\Documents\GitHub\New-nea\Program.cs">

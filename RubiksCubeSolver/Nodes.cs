@@ -41,11 +41,6 @@ namespace RubiksCubeSolver
         public Cube state { get; set; }
         public string move { get; set; }
         public int depth { get; set; }
-        // heuristic calculation values
-        public double H { get; set; }
-        public double G { get; set; }
-        public double F { get; set; }
-        public double X { get; set; }
         public Node(Node parent, Cube state, string move)
         {
             this.move = move;

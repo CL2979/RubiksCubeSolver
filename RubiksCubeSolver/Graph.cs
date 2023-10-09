@@ -50,7 +50,6 @@ namespace RubiksCubeSolver
                         temp.state.Rotate(moves[i], directions[j]);
                         temp.move = Combine(moves[i], directions[j]);
                         temp.depth = current.depth++;
-                        temp.X = 28 - temp.depth;
                         if (Phase1Complete(temp.state))
                         {
                             returnNode = temp;
@@ -77,38 +76,29 @@ namespace RubiksCubeSolver
             while (!end)
             {
                 current = queue.Dequeue();
-                for (int i = 0; i < G1moves.Length; i++)
+                for (int i = 0; i < moves.Length; i++)
                 {
-                    if (current.move.Contains(G1moves[i])) break;
-                    Node temp = DeepCopy(current);
-                    string[] temporary = DeCombine(G1moves[i]);
-                    char move = char.Parse(temporary[0]);
-                    int direction = int.Parse(temporary[1]);
-                    temp.state.Rotate(move, direction);
-                    temp.move = move + direction.ToString();
-                    temp.depth = current.depth++;
-                    temp.X = 28 - temp.depth;
-                    if (Phase2Complete(temp.state))
+                    for (int j = 0; j < directions.Length; j++)
                     {
-                        returnNode = temp;
-                        end = true;
+                        if (current.move.Contains(moves[i])) break;
+                        Node temp = DeepCopy(current);
+                        temp.state.Rotate(moves[i], directions[j]);
+                        temp.move = Combine(moves[i], directions[j]);
+                        temp.depth = current.depth++;
+                        if (Phase2Complete(temp.state))
+                        {
+                            returnNode = temp;
+                            end = true;
+                        }
+                        queue.Enqueue(temp);
+                        children.Add(temp);
+                        count++;
                     }
-                    queue.Enqueue(temp);
-                    children.Add(temp);
-                    count++;
                 }
                 Add(current, children);
             }
             Console.WriteLine(count + " nodes generated");
             return returnNode;
-        }
-        public Dictionary<Node, List<Node>> GetGraph()
-        {
-            return adjacencyList;
-        }
-        public Node GetFirst()
-        {
-            return root;
         }
         private void Add(Node parent, List<Node> children)
         {
@@ -130,6 +120,14 @@ namespace RubiksCubeSolver
         {
             int index = existingChildren.IndexOf(child);
             if (index != -1) existingChildren[index] = child;
+        }
+        public Dictionary<Node, List<Node>> GetGraph()
+        {
+            return adjacencyList;
+        }
+        public Node GetFirst()
+        {
+            return root;
         }
         private bool Phase1Complete(Cube state)
         {

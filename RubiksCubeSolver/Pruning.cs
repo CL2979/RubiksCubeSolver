@@ -6,10 +6,6 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
-    public class TempPruning
-    {
-
-    }
     public class PruningTables
     {
         // ??
@@ -17,6 +13,5 @@ namespace RubiksCubeSolver
     public class DeadEndRemoval
     {
         // use this when a solution has been reached to reduce searching size
-
     }
 }
