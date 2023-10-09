@@ -32,9 +32,7 @@ namespace RubiksCubeSolver
         }
         public Node GeneratePhase1()
         {
-            Node returnNode = new Node(null, null, "");
             Node current = queue.Peek(); // this will be kept constant while temp changes
-            current.depth = 0;
             if (Phase1Complete(current.state)) return current;
             bool end = false;
             while (!end)
@@ -49,11 +47,9 @@ namespace RubiksCubeSolver
                         temp.parent = current;
                         temp.state.Rotate(moves[i], directions[j]);
                         temp.move = Combine(moves[i], directions[j]);
-                        temp.depth = current.depth++;
                         if (Phase1Complete(temp.state))
                         {
-                            returnNode = temp;
-                            end = true;
+                            return temp;
                         }
                         queue.Enqueue(temp);
                         graph.Add(temp);
@@ -62,13 +58,11 @@ namespace RubiksCubeSolver
                 }
             }
             Console.WriteLine(count + " nodes generated");
-            return returnNode;
+            return null;
         }
         public Node GeneratePhase2()
         {
-            Node returnNode = new Node(null, null, "");
             Node current = queue.Peek(); // this will be kept constant while temp changes
-            current.depth = 0;
             if (Phase2Complete(current.state)) return current;
             bool end = false;
             while (!end)
@@ -83,11 +77,9 @@ namespace RubiksCubeSolver
                         temp.parent = current;
                         temp.state.Rotate(moves[i], directions[j]);
                         temp.move = Combine(moves[i], directions[j]);
-                        temp.depth = current.depth++;
                         if (Phase2Complete(temp.state))
                         {
-                            returnNode = temp;
-                            end = true;
+                            return temp;
                         }
                         queue.Enqueue(temp);
                         graph.Add(temp);
@@ -96,7 +88,7 @@ namespace RubiksCubeSolver
                 }
             }
             Console.WriteLine(count + " nodes generated");
-            return returnNode;
+            return null;
         }
         public List<Node> GetGraph()
         {

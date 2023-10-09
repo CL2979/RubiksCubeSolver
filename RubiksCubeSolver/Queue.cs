@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
+    // this is very slow and was causing a whole load of errors so improve later
     public interface IPriorityQueue<T>
     {
         void Enqueue(T item, long priority);

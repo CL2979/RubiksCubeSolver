@@ -25,12 +25,12 @@ namespace RubiksCubeSolver
         {
             Cubie copy = new Cubie(orientation, location, originalLocation)
             {
-                orientation = this.orientation,
-                location = this.location,
-                originalLocation = this.originalLocation,
-                colour1 = this.colour1,
-                colour2 = this.colour2,
-                colour3 = this.colour3
+                orientation = orientation,
+                location = location,
+                originalLocation = originalLocation,
+                colour1 = colour1,
+                colour2 = colour2,
+                colour3 = colour3
             };
             return copy;
         }
@@ -40,7 +40,6 @@ namespace RubiksCubeSolver
         public Node parent { get; set; }
         public Cube state { get; set; }
         public string move { get; set; }
-        public int depth { get; set; }
         public Node(Node parent, Cube state, string move)
         {
             this.move = move;

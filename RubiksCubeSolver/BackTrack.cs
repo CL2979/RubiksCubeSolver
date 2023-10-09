@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
-    public class BFS
+    public class BackTrack
     {
         // partially broken for some reason, too slow to bother fixing
         public List<string> Search(Node start, Node target)

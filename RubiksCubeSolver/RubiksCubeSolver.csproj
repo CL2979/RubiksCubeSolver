@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BFS.cs" />
+    <Compile Include="BackTrack.cs" />
     <Compile Include="Cube.cs" />
     <Compile Include="C:\Users\camer\Documents\GitHub\New-nea\Program.cs">
       <Link>Program.cs</Link>
@@ -52,7 +52,6 @@
     <Compile Include="Kociemba.cs" />
     <Compile Include="Nodes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Pruning.cs" />
     <Compile Include="Queue.cs" />
   </ItemGroup>
   <ItemGroup>
