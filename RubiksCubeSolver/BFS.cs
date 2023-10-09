@@ -9,45 +9,17 @@ namespace RubiksCubeSolver
     public class BFS
     {
         // partially broken for some reason, too slow to bother fixing
-        public List<string> Search(Dictionary<Node, List<Node>> adjacencyList, Node start, Node target)
+        public List<string> Search(Node start, Node target)
         {
-            Dictionary<Node, Node> parentMap = new Dictionary<Node, Node>();
-            HashSet<Node> visited = new HashSet<Node>();
-            Queue<Node> queue = new Queue<Node>();
-            queue.Enqueue(start);
-            while (queue.Count > 0)
+            List<string> solution = new List<string>();
+            Node current = target;
+            while (current != null)
             {
-                Node currentNode = queue.Dequeue();
-                if (currentNode.state == target.state) return GetPath(target, parentMap);
-                if (!visited.Contains(currentNode))
-                {
-                    visited.Add(currentNode);
-                    if (adjacencyList.ContainsKey(currentNode))
-                    {
-                        foreach (Node neighbor in adjacencyList[currentNode])
-                        {
-                            if (!visited.Contains(neighbor))
-                            {
-                                queue.Enqueue(neighbor);
-                                parentMap[neighbor] = currentNode;
-                            }
-                        }
-                    }
-                }
+                solution.Add(current.move);
+                current = current.parent;
             }
-            Console.WriteLine("Something went wrong.");
-            return new List<string>();
-        }
-        private static List<string> GetPath(Node node, Dictionary<Node, Node> parentMap)
-        {
-            List<string> path = new List<string>();
-            while (parentMap.ContainsKey(node))
-            {
-                Node parent = parentMap[node];
-                path.Insert(0, node.move);
-                node = parent;
-            }
-            return path;
+            solution.Reverse();
+            return solution;
         }
     }
 }

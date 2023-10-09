@@ -12,7 +12,7 @@ namespace RubiksCubeSolver
     // we will also be more likely to find a better solution that way
     public class Graph
     {
-        private Dictionary<Node, List<Node>> adjacencyList;
+        private List<Node> graph;
         private Queue<Node> queue;
         private char[] moves = { 'U', 'D', 'F', 'B', 'L', 'R' };
         private int[] directions = { -1, 1, 2 };
@@ -23,9 +23,9 @@ namespace RubiksCubeSolver
         public Graph(Cube initialState)
         {
             root = new Node(null, initialState, "");
-            adjacencyList = new Dictionary<Node, List<Node>>();
+            graph = new List<Node>();
             queue = new Queue<Node>(); // change later
-            adjacencyList.Add(root, new List<Node>());
+            graph.Add(root);
             queue.Enqueue(root);
             this.initialState = initialState;
             count = 0;
@@ -33,7 +33,6 @@ namespace RubiksCubeSolver
         public Node GeneratePhase1()
         {
             Node returnNode = new Node(null, null, "");
-            List<Node> children = new List<Node>();
             Node current = queue.Peek(); // this will be kept constant while temp changes
             current.depth = 0;
             if (Phase1Complete(current.state)) return current;
@@ -47,6 +46,7 @@ namespace RubiksCubeSolver
                     {
                         if (current.move.Contains(moves[i])) break;
                         Node temp = DeepCopy(current);
+                        temp.parent = current;
                         temp.state.Rotate(moves[i], directions[j]);
                         temp.move = Combine(moves[i], directions[j]);
                         temp.depth = current.depth++;
@@ -56,11 +56,10 @@ namespace RubiksCubeSolver
                             end = true;
                         }
                         queue.Enqueue(temp);
-                        children.Add(temp);
+                        graph.Add(temp);
                         count++;
                     }
                 }
-                Add(current, children);
             }
             Console.WriteLine(count + " nodes generated");
             return returnNode;
@@ -68,7 +67,6 @@ namespace RubiksCubeSolver
         public Node GeneratePhase2()
         {
             Node returnNode = new Node(null, null, "");
-            List<Node> children = new List<Node>();
             Node current = queue.Peek(); // this will be kept constant while temp changes
             current.depth = 0;
             if (Phase2Complete(current.state)) return current;
@@ -82,6 +80,7 @@ namespace RubiksCubeSolver
                     {
                         if (current.move.Contains(moves[i])) break;
                         Node temp = DeepCopy(current);
+                        temp.parent = current;
                         temp.state.Rotate(moves[i], directions[j]);
                         temp.move = Combine(moves[i], directions[j]);
                         temp.depth = current.depth++;
@@ -91,39 +90,17 @@ namespace RubiksCubeSolver
                             end = true;
                         }
                         queue.Enqueue(temp);
-                        children.Add(temp);
+                        graph.Add(temp);
                         count++;
                     }
                 }
-                Add(current, children);
             }
             Console.WriteLine(count + " nodes generated");
             return returnNode;
         }
-        private void Add(Node parent, List<Node> children)
+        public List<Node> GetGraph()
         {
-            if (adjacencyList.ContainsKey(parent))
-            {
-                List<Node> existingChildren = adjacencyList[parent];
-                foreach (Node child in children.ToList())
-                {
-                    if (!existingChildren.Contains(child))
-                    {
-                        existingChildren.Add(child);
-                    }
-                    else Update(existingChildren, child);
-                }
-            }
-            else adjacencyList[parent] = children;
-        }
-        private void Update(List<Node> existingChildren, Node child)
-        {
-            int index = existingChildren.IndexOf(child);
-            if (index != -1) existingChildren[index] = child;
-        }
-        public Dictionary<Node, List<Node>> GetGraph()
-        {
-            return adjacencyList;
+            return graph;
         }
         public Node GetFirst()
         {
