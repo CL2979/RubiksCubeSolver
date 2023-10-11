@@ -49,6 +49,7 @@ namespace RubiksCubeSolver
                         temp.move = Combine(moves[i], directions[j]);
                         if (Phase1Complete(temp.state))
                         {
+                            Console.WriteLine(count + " nodes generated");
                             return temp;
                         }
                         queue.Enqueue(temp);
@@ -57,7 +58,6 @@ namespace RubiksCubeSolver
                     }
                 }
             }
-            Console.WriteLine(count + " nodes generated");
             return null;
         }
         public Node GeneratePhase2()
@@ -79,6 +79,7 @@ namespace RubiksCubeSolver
                         temp.move = Combine(moves[i], directions[j]);
                         if (Phase2Complete(temp.state))
                         {
+                            Console.WriteLine(count + " nodes generated");
                             return temp;
                         }
                         queue.Enqueue(temp);
@@ -87,7 +88,6 @@ namespace RubiksCubeSolver
                     }
                 }
             }
-            Console.WriteLine(count + " nodes generated");
             return null;
         }
         public List<Node> GetGraph()

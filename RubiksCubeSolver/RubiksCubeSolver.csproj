@@ -45,12 +45,10 @@
   <ItemGroup>
     <Compile Include="BackTrack.cs" />
     <Compile Include="Cube.cs" />
-    <Compile Include="C:\Users\camer\Documents\GitHub\New-nea\Program.cs">
-      <Link>Program.cs</Link>
-    </Compile>
     <Compile Include="Graph.cs" />
     <Compile Include="Kociemba.cs" />
     <Compile Include="Nodes.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queue.cs" />
   </ItemGroup>
