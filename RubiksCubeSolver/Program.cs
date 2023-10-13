@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RubiksCubeSolver
 {
@@ -17,33 +18,34 @@ namespace RubiksCubeSolver
     {
         // R U L2 F2 B2 U2 works in 84 seconds (2.7GB memory)
         // did the checkerboard pattern in 94 seconds (2.6GB memory)
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
+            Cube solved = new Cube();
             Cube cube = new Cube();
             cube.Rotate('L', 2);
-            cube.Rotate('R', 2);
-            cube.Rotate('F', 2);
-            cube.Rotate('B', 2);
-            cube.Rotate('U', 2);
-            cube.Rotate('D', 2);
+            //cube.Rotate('R', 2);
             //cube.Rotate('F', 2);
+            //cube.Rotate('B', 2);
+            //cube.Rotate('U', 2);
+            //cube.Rotate('D', 2);
             var start = DateTime.Now;
             Console.WriteLine("Phase 1: ");
             Graph graph1 = new Graph(cube);
             Node endof1 = graph1.GeneratePhase1();
             BackTrack search1 = new BackTrack();
-            List<string> stage1solution = search1.Search(graph1.GetFirst(), endof1);
+            List<string> stage1solution = search1.Search(graph1.GetFirst(), graph1);
             var end = DateTime.Now;
             Console.WriteLine("Stage one in: " + (end - start).TotalSeconds + " seconds.");
             Console.WriteLine();
 
             start = DateTime.Now;
             Console.WriteLine("Phase 2: "); // multithreading the second stage as we have a goal state
-            Graph graph2 = new Graph(endof1.state);
+            /*Graph graph2 = new Graph(endof1.state);
             Node endof2 = graph2.GeneratePhase2();
             BackTrack search2 = new BackTrack();
             List<string> stage2solution = search2.Search(graph2.GetFirst(), endof2);
-            //List<string> stage2solution = await FindCommonNode(endof1.state, endof1);
+            //List<string> stage2solution = await FindCommonNode(endof1.state, endof1);*/
+            List<string> stage2solution = await InitThreads2(endof1, solved);
             end = DateTime.Now;
             Console.WriteLine("Stage two in: " + (end - start).TotalSeconds + " seconds.");
             Console.WriteLine();
@@ -55,9 +57,66 @@ namespace RubiksCubeSolver
             }
             Console.ReadKey();
         }
-        private static async Task<List<Node>> FindCommonNodePhase2(Node endof1) // this function generates two graphs and checks for common node
+        private static async Task<Node> InitThreads1(Cube solved) // only generating from one direction due to lack of target node
         {
             return null;
+        }
+        private static object lockObject = new object();
+        private static async Task<List<string>> InitThreads2(Node endof1, Cube solved)
+        {
+            Node solvedState = new Node(null, solved, "");
+            Graph initialGraph = new Graph(endof1.state);
+            Graph finalGraph = new Graph(solved);
+            Task<Node> thread1 = Task.Run(() => GeneratePhase2Parallel(initialGraph));
+            Task<Node> thread2 = Task.Run(() => GeneratePhase2Parallel(finalGraph));
+            Node commonNode = null;
+            while (true)
+            {
+                Task<Node> completed = await Task.WhenAny(thread1, thread2);
+                if (completed == thread1 || completed == thread2)
+                {
+                    if (completed.Result != null) commonNode = completed.Result;
+                }
+                if (commonNode != null && Phase2Complete(commonNode.state))
+                {
+                    List<string> path1 = Backtracker(commonNode, initialGraph);
+                    List<string> path2 = Backtracker(commonNode, finalGraph);
+                    path2.Reverse();
+                    path1.AddRange(path2);
+                    return path1;
+                }
+            }
+        }
+        private static Node GeneratePhase2Parallel(Graph graph)
+        {
+            Node node = new Node(null, null, "");
+            lock (lockObject)
+            {
+                graph.GeneratePhase2();
+                node = graph.GetCommon();
+            }
+            return node;
+        }
+        private static bool Phase1Complete(Cube state)
+        {
+            if (state == null) return false;
+            Kociemba kociemba = new Kociemba(state);
+            double[] d = kociemba.Phase1();
+            if (d[0] == 0 && d[1] == 0 && d[2] == 0) return true;
+            return false;
+        }
+        private static bool Phase2Complete(Cube state)
+        {
+            if (state == null) return false;
+            Kociemba kociemba = new Kociemba(state);
+            double[] d = kociemba.Phase2();
+            if (d[0] == 0 && d[1] == 0 && d[2] == 0) return true;
+            return false;
+        }
+        private static List<string> Backtracker(Node node, Graph graph)
+        {
+            BackTrack search = new BackTrack();
+            return search.Search(node, graph);
         }
         private static List<string> Simplify(List<string> part1, List<string> part2)
         {

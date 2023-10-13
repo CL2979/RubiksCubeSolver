@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace RubiksCubeSolver
 {
@@ -19,12 +20,14 @@ namespace RubiksCubeSolver
         private string[] G1moves = { "R2", "L2", "F2", "B2", "U1", "U'", "U2", "D1", "D'", "D2" };
         private Cube initialState;
         private Node root;
+        private Node common;
         private long count;
         public Graph(Cube initialState)
         {
             root = new Node(null, initialState, "");
+            common = new Node(null, null, "");
             graph = new List<Node>();
-            queue = new Queue<Node>(); // change later
+            queue = new Queue<Node>(50000000); // change later
             graph.Add(root);
             queue.Enqueue(root);
             this.initialState = initialState;
@@ -82,6 +85,7 @@ namespace RubiksCubeSolver
                             Console.WriteLine(count + " nodes generated");
                             return temp;
                         }
+                        common = temp;
                         queue.Enqueue(temp);
                         graph.Add(temp);
                         count++;
@@ -89,6 +93,10 @@ namespace RubiksCubeSolver
                 }
             }
             return null;
+        }
+        public Node GetCommon()
+        {
+            return common;
         }
         public List<Node> GetGraph()
         {

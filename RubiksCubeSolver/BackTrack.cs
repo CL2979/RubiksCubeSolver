@@ -8,11 +8,16 @@ namespace RubiksCubeSolver
 {
     public class BackTrack
     {
-        // partially broken for some reason, too slow to bother fixing
-        public List<string> Search(Node start, Node target)
+        public List<string> Search(Node node, Graph ingraph)
         {
+            List<Node> graph = ingraph.GetGraph();
             List<string> solution = new List<string>();
-            Node current = target;
+            Cube cube = node.state;
+            Node current = null;
+            foreach (Node node1 in graph)
+            {
+                if (node1.state.Equals(cube)) current = node1;
+            }
             while (current != null)
             {
                 solution.Add(current.move);

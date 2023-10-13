@@ -6,172 +6,73 @@ using System.Threading.Tasks;
 
 namespace RubiksCubeSolver
 {
-    // this is very slow and was causing a whole load of errors so improve later
-    public interface IPriorityQueue<T>
+    public class Queue<T>
     {
-        void Enqueue(T item, long priority);
-        T Dequeue();
-        T Peek();
-        bool IsEmpty();
-        bool IsFull();
-        long Count();
-    }
-    public class Element<T>
-    {
-        public T value { get; set; }
-        public long priority { get; set; }
-        public Element(T value, long priority)
+        private T[] queue;
+        private HashSet<T> contains;
+        private int maxSize;
+        private int size;
+        private int frontptr;
+        private int backptr;
+        public Queue(int maxSize)
         {
-            this.value = value;
-            this.priority = priority;
-        }
-    }
-    public class PRIORITYQUEUE<T> : IPriorityQueue<T>
-    {
-        private List<Element<T>> queue;
-        private long maxSize;
-        public PRIORITYQUEUE(long maxSize)
-        {
+            queue = new T[maxSize];
+            contains = new HashSet<T>();
             this.maxSize = maxSize;
-            queue = new List<Element<T>>();
+            size = 0;
+            frontptr = 0;
+            backptr = -1;
         }
-        public void Enqueue(T item, long priority)
+        public void Enqueue(T item)
         {
-            if (!IsFull())
-            {
-                Element<T> element = new Element<T>(item, priority);
-                int index = queue.FindIndex(e => e.priority > priority);
-                if (index == -1) queue.Add(element);
-                else queue.Insert(index, element);
-            }
-            else throw new Exception("Cannot enqueue element because queue is full.");
+            backptr = (backptr + 1) % maxSize;
+            queue[backptr] = item;
+            size++;
         }
         public T Dequeue()
         {
-            if (!IsEmpty())
+            if (size > 0)
             {
-                Element<T> element = queue[0];
-                queue.RemoveAt(0); // Remove the element at the front
-                return element.value;
+                T item = queue[frontptr];
+                frontptr = (frontptr + 1) % maxSize;
+                size--;
+                return item;
             }
-            else throw new Exception("Cannot dequeue element because queue is empty.");
+            else
+            {
+                throw new InvalidOperationException("Queue is empty.");
+            }
         }
         public T Peek()
         {
-            if (!IsEmpty())
+            if (size > 0)
             {
-                Element<T> element = queue[0];
-                return element.value;
+                return queue[frontptr];
             }
-            else throw new Exception("Cannot peek at element because queue is empty.");
+            else
+            {
+                throw new InvalidOperationException("Queue is empty.");
+            }
         }
         public bool IsEmpty()
         {
-            return queue.Count == 0;
-        }
-        public bool IsFull()
-        {
-            return queue.Count == maxSize;
+            return size == 0;
         }
         public long Count()
         {
-            return queue.Count;
+            return size;
         }
         public bool Contains(T item)
         {
-            bool b = false;
-            foreach (Element<T> element in queue)
-            {
-                if (EqualityComparer<T>.Default.Equals(element.value, item)) b = true;
-            }
-            return b;
+            return contains.Contains(item);
         }
-    }
-
-// cant use array as it's too big
-/*public class Element<T>
-{
-    public T value { get; set; }
-    public long priority { get; set; }
-    public Element(T value, long priority)
-    {
-        this.value = value;
-        this.priority = priority;
-    }
-}
-public class PRIORITYQUEUE<T> : IPriorityQueue<T>
-{
-    private Element<T>[] queue;
-    private long size;
-    private long maxSize;
-    private long frontptr;
-    private long backptr;
-    public PRIORITYQUEUE(long maxSize)
-    {
-        this.maxSize = maxSize;
-        size = 0;
-        frontptr = 0;
-        backptr = -1;
-        queue = new Element<T>[maxSize];
-    }
-    public void Enqueue(T item, long priority)
-    {
-        if (!IsFull())
+        public void Clear()
         {
-            Element<T> element = new Element<T>(item, priority);
-            long i;
-            for (i = size - 1; i >= 0 && queue[i].priority > priority; i--) // making lowest value highest priority
-            { // this is so that the heuristic function works properly
-                queue[i + 1] = queue[i];
-            }
-            queue[i + 1] = element;
-            backptr++;
-            size++;
-        }
-        else
-        {
-            throw new Exception("Cannot enqueue element because queue is full.");
+            Array.Clear(queue, 0, maxSize);
+            size = 0;
+            frontptr = 0;
+            backptr = -1;
+            contains.Clear();
         }
     }
-    public T Dequeue()
-    {
-        if (!IsEmpty())
-        {
-            Element<T> element = queue[frontptr];
-            T item = element.value;
-            size--;
-            frontptr++;
-            return item;
-        }
-        else
-        {
-            throw new Exception("Cannot dequeue element because queue is empty.");
-        }
-    }
-    public T Peek()
-    {
-        if (!IsEmpty())
-        {
-            Element<T> element = queue[frontptr];
-            T item = element.value;
-            return item;
-        }
-        else
-        {
-            throw new Exception("Cannot peek at element because queue is empty.");
-        }
-    }
-    public bool IsEmpty()
-    {
-        return size == 0;
-    }
-    public bool IsFull()
-    {
-        return size == maxSize;
-    }
-    public long Count()
-    {
-        return size;
-    }
-}*/
 }
